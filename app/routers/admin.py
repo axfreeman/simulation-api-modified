@@ -3,6 +3,7 @@
 """
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Security
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
@@ -61,9 +62,14 @@ def get_user_for_admin(
         raise HTTPException(status_code=404, detail=f'User {username} does not exist')
     return user
 
+class UserCreate(BaseModel):
+    username: str
+    password:str
+
 @router.post("/register", status_code=201,response_model=UserMessage)
 def register(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    # form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    user_data:UserCreate,
     session: Session = Depends(get_session),
     u:User=Security(get_api_key)
 )->str:
@@ -76,27 +82,26 @@ def register(
         Return status: 201 if the registration succeeds.
     """
     print("Entered Register")
-    return
     print(f"The user {u.username} with credentials {u.api_key} wants to register a new user")
-    print(f"The new user is called {form_data.username}")
+    print(f"The new user is called {user_data.username}")
 
     if u.username!='admin':
         logger.error('Only admin can do this')
         raise HTTPException(status_code=400, detail='Only admin can do this')
-    if session.query(User).where(User.username == form_data.username).first() is not None:
-        logger.error(f'{form_data.username} already exists')
-        raise HTTPException(status_code=409, detail=f'{form_data.username} already exists')
+    if session.query(User).where(User.username == user_data.username).first() is not None:
+        logger.error(f'{user_data.username} already exists')
+        raise HTTPException(status_code=409, detail=f'{user_data.username} already exists')
     user:User=User(
-        username=form_data.username,
-        api_key=form_data.password,
+        username=user_data.username,
+        api_key=user_data.password,
         current_simulation_id=0,
         is_locked=False,
     )
     session.add(user)
     session.commit()
-    logger.info(f'{form_data.username} created')
+    logger.info(f'{user.username} created')
 
-    return {'message': f'User {form_data.username} registered'}
+    return {'message': f'User {user.username} registered'}
 
 @router.get("/lock/{username}",response_model=ServerMessage)
 def lock_user(
