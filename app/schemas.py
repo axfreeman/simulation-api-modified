@@ -16,8 +16,13 @@ class CloneMessage(BaseModel):
 class UserBase(BaseModel):
     username: str
     current_simulation_id: int
+    password: str # TODO hashed and encrypted may not be safe. Under investigation to find better way.
     is_locked:bool
     api_key:str
+
+class UserCreate(BaseModel):
+    username: str
+    password:str    
     
 class SimulationBase(BaseModel):
     id:int

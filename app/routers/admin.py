@@ -10,7 +10,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Security, status
 from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
-from ..schemas import UserMessage, ServerMessage
+from ..schemas import UserCreate, UserMessage, ServerMessage
 from typing import Annotated
 from ..reporting.caplog import logger
 import logging
@@ -62,10 +62,6 @@ def get_user_for_admin(
         raise HTTPException(status_code=404, detail=f'User {username} does not exist')
     return user
 
-class UserCreate(BaseModel):
-    username: str
-    password:str
-
 @router.post("/register", status_code=201,response_model=UserMessage)
 def register(
     # form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
@@ -81,7 +77,6 @@ def register(
         Return status: 409 if user already exists.
         Return status: 201 if the registration succeeds.
     """
-    print("Entered Register")
     print(f"The user {u.username} with credentials {u.api_key} wants to register a new user")
     print(f"The new user is called {user_data.username}")
 
@@ -93,7 +88,8 @@ def register(
         raise HTTPException(status_code=409, detail=f'{user_data.username} already exists')
     user:User=User(
         username=user_data.username,
-        api_key=user_data.password,
+        password=user_data.password,
+        api_key=user_data.username+"key",
         current_simulation_id=0,
         is_locked=False,
     )
