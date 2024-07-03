@@ -15,7 +15,7 @@ from typing import Annotated
 from ..reporting.caplog import logger
 import logging
 
-from ..schemas import UserBase
+from ..schemas import UserBase,UserWithPassword
 from ..database import get_session
 from ..authorization.auth import get_api_key
 from ..models import User
@@ -37,10 +37,10 @@ def get_users_for_admin(
     """
     if u.username!='admin':
         raise HTTPException(status_code=400, detail='Only admin can do this')
-    user = session.query(User).all()
-    return user
+    users = session.query(User).all()
+    return users
 
-@router.get("/user/{username}",response_model=UserBase)
+@router.get("/user/{username}",response_model=UserWithPassword)
 def get_user_for_admin(
     username:str,
     u: User = Security(get_api_key),
