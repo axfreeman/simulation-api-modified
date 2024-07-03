@@ -92,6 +92,7 @@ def register(
         api_key=user_data.username+"key",
         current_simulation_id=0,
         is_locked=False,
+        role=user_data.role,
     )
     session.add(user)
     session.commit()
