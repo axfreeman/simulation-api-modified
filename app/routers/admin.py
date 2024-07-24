@@ -73,8 +73,8 @@ def register(
         Return status: 409 if user already exists.
         Return status: 201 if the registration succeeds.
     """
-    report (f"The user {u.username} with credentials {u.api_key} wants to register a new user")
-    print(f"The new user is called {user_data.username}")
+    report(1,0,f"The user {u.username} with credentials {u.api_key} wants to register a new user",session)
+    report(1,0,f"The new user is called {user_data.username}",session)
 
     if u.username!='admin':
         logger.error('Only admin can do this')
