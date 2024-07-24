@@ -1,6 +1,6 @@
 """This module provides the endpoint for a user to clone a model."""
 
-from fastapi import APIRouter, Depends, Security, status
+from fastapi import APIRouter, Depends, Security, status, Response
 from app.database import get_session
 from app.logging import report
 from app.schemas import CloneMessage, ServerMessage
@@ -35,9 +35,10 @@ def clone_model(model, session: Session, **kwargs):
     except:
         return None
 
-@router.get("/{id}",response_model=CloneMessage)
+@router.get("/{id}",status_code=200, response_model=CloneMessage)
 def create_simulation_from_template(
     id: str,
+    response: Response,     
     u: User = Security(get_api_key),
     session: Session = Depends(get_session),
 )->str:
@@ -51,6 +52,16 @@ def create_simulation_from_template(
 
         return:  a message, httpStatus, id of the new simulation if successful.
     """
+    try:
+        id_as_number = int(id)
+    except ValueError:
+        response.status_code=status.HTTP_406_NOT_ACCEPTABLE
+        return {
+            "message":"invalid simulation id",
+            "statusCode":status.HTTP_406_NOT_ACCEPTABLE, 
+            "simulation_id":0
+        }
+
     template = session.query(Simulation).filter(Simulation.id == int(id)).first()
     new_simulation = clone_model(template, session)
     if new_simulation is None:
