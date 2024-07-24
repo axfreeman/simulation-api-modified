@@ -3,17 +3,13 @@
 """
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Security
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordRequestForm
-from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Security, status
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordRequestForm
+
+from app.logging import report
 from ..schemas import UserCreate, UserMessage, ServerMessage
-from typing import Annotated
 from ..reporting.caplog import logger
-import logging
 
 from ..schemas import UserBase,UserWithPassword
 from ..database import get_session
@@ -77,7 +73,7 @@ def register(
         Return status: 409 if user already exists.
         Return status: 201 if the registration succeeds.
     """
-    print(f"The user {u.username} with credentials {u.api_key} wants to register a new user")
+    report (f"The user {u.username} with credentials {u.api_key} wants to register a new user")
     print(f"The new user is called {user_data.username}")
 
     if u.username!='admin':

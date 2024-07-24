@@ -407,7 +407,7 @@ class Class_stock(Base):
             return 0.0
 
     def flow_per_period(self, session: Session) -> float:
-        print(f"anuual flow rate of {self.name} is {self.annual_flow_rate(session)} and periods per year is {self.simulation(session).periods_per_year}")
+        print(f"annual flow rate of {self.name} is {self.annual_flow_rate(session)} and periods per year is {self.simulation(session).periods_per_year}")
         return self.annual_flow_rate(session) / self.simulation(session).periods_per_year
 
     def standard_stock(self, session: Session) -> float:
