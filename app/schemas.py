@@ -18,15 +18,9 @@ class UserBase(BaseModel):
     current_simulation_id: int
     is_locked:bool
     api_key:str
-    role:str
-
-class UserWithPassword(UserBase):
-    password: str # TODO temporary insecure fix for dev only
 
 class UserCreate(BaseModel):
     username: str
-    password:str    
-    role:str
     
 class SimulationBase(BaseModel):
     id:int

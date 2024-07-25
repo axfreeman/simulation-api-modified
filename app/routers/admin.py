@@ -11,7 +11,7 @@ from app.logging import report
 from ..schemas import UserCreate, UserMessage, ServerMessage
 from ..reporting.caplog import logger
 
-from ..schemas import UserBase,UserWithPassword
+from ..schemas import UserBase
 from ..database import get_session
 from ..authorization.auth import get_api_key
 from ..models import User
@@ -36,7 +36,7 @@ def get_users_for_admin(
     users = session.query(User).all()
     return users
 
-@router.get("/user/{username}",response_model=UserWithPassword)
+@router.get("/user/{username}",response_model=UserBase)
 def get_user_for_admin(
     username:str,
     u: User = Security(get_api_key),
@@ -73,7 +73,7 @@ def register(
         Return status: 409 if user already exists.
         Return status: 201 if the registration succeeds.
     """
-    report(1,0,f"The user {u.username} with credentials {u.api_key} wants to register a new user",session)
+    report(1,0,f"The user {u.username} wants to register a new user",session)
     report(1,0,f"The new user is called {user_data.username}",session)
 
     if u.username!='admin':
@@ -84,11 +84,9 @@ def register(
         raise HTTPException(status_code=409, detail=f'{user_data.username} already exists')
     user:User=User(
         username=user_data.username,
-        password=user_data.password,
         api_key=user_data.username+"key",
         current_simulation_id=0,
         is_locked=False,
-        role=user_data.role,
     )
     session.add(user)
     session.commit()
