@@ -97,6 +97,7 @@ def register(
     registrationMessage={'username': user.username,'apikey':user.api_key}
     return registrationMessage
 
+
 @router.get("/lock/{username}",response_model=ServerMessage)
 def lock_user(
     username: str,
@@ -105,7 +106,7 @@ def lock_user(
 )->ServerMessage:
     """
     Lock a username to restrict access to it to one player.
-
+    Currently redundant but kept as legacy
         username (string):the name of the user to lock
 
         If there is no such user, respond with status code 400.   
@@ -128,7 +129,6 @@ def lock_user(
     session.commit()
     return {'message': f'User {username} has now been locked',"statusCode":status.HTTP_200_OK}
         
-
 @router.get("/unlock/{username}",response_model=ServerMessage)
 def unlock_user(
     username: str,
@@ -137,6 +137,7 @@ def unlock_user(
 )->ServerMessage:
     """
     Unlock a username so other players can use it.
+    Currently redundant but kept as legacy
 
         username(string):
             the name of the user to unlock
