@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Security, status
 from sqlalchemy.orm import Session
 
 from app.logging import report
-from ..schemas import UserCreate, UserMessage, ServerMessage
+from ..schemas import UserCreate, UserRegistrationMessage, ServerMessage
 from ..reporting.caplog import logger
 
 from ..schemas import UserBase
@@ -58,19 +58,21 @@ def get_user_for_admin(
         raise HTTPException(status_code=404, detail=f'User {username} does not exist')
     return user
 
-@router.post("/register", status_code=201,response_model=UserMessage)
+@router.post("/register", status_code=201,response_model=UserRegistrationMessage)
 def register(
     # form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     user_data:UserCreate,
     session: Session = Depends(get_session),
     u:User=Security(get_api_key)
 )->str:
-    """Register a new user and API key. 
+    """Register a new user and provide an API key. 
     Only admin user can do this.
 
-        form_data: user and api key.
+        form_data: user name.
+        Return status: 401 if access not authorised (supplied by fastapi)
         Return status: 405 if not the admin user.
-        Return status: 409 if user already exists.
+        Return status: 409 (edit conflict) if user already exists.
+        Return status: 422 if the input has the wrong format (supplied by fastapi)
         Return status: 201 if the registration succeeds.
     """
     report(1,0,f"The user {u.username} wants to register a new user",session)
@@ -79,6 +81,7 @@ def register(
     if u.username!='admin':
         logger.error('Only admin can do this')
         raise HTTPException(status_code=400, detail='Only admin can do this')
+    
     if session.query(User).where(User.username == user_data.username).first() is not None:
         logger.error(f'{user_data.username} already exists')
         raise HTTPException(status_code=409, detail=f'{user_data.username} already exists')
@@ -91,8 +94,8 @@ def register(
     session.add(user)
     session.commit()
     logger.info(f'{user.username} created')
-
-    return {'message': f'User {user.username} registered'}
+    registrationMessage={'username': user.username,'apikey':user.api_key}
+    return registrationMessage
 
 @router.get("/lock/{username}",response_model=ServerMessage)
 def lock_user(

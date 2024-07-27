@@ -1,8 +1,11 @@
 import http
 from pydantic import BaseModel
 
-class UserMessage(BaseModel):
-    message: str
+# Return message for a remote registration
+# Returns with confirmation of the name and an apikey
+class UserRegistrationMessage(BaseModel):
+    username: str
+    apikey:str
 
 class ServerMessage(BaseModel):
     message:str
@@ -21,7 +24,7 @@ class UserBase(BaseModel):
 
 class UserCreate(BaseModel):
     username: str
-    
+        
 class SimulationBase(BaseModel):
     id:int
     name: str
