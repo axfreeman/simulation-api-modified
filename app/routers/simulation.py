@@ -84,7 +84,7 @@ def get_current_user_simulation(
 
         Raise httpException otherwise
     """
-    logger.info(f"User {u.username} requested simulation {u.current_simulation_id}")
+    report(1,0,f"User {u.username} requested simulation {u.current_simulation_id}",session)
     simulations:Simulation=session.query(Simulation).where(Simulation.id==u.current_simulation_id)
     if simulations is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='This user has no simulations')
