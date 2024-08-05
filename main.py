@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from .database import Base, engine
+from app.database import Base, engine
 
-from .routers import (
+from app.routers import (
     actions,
     commodity,
     simulation,
@@ -37,3 +37,5 @@ app.include_router(templates.router)
 app.include_router(trace.router)
 
 # app.include_router(tests.router)
+
+
