@@ -1,17 +1,17 @@
 # Simulation-api, version 15
 ## This is an api provider for the simulation of a capitalist economy 
 * You can see the results in a browser using Swagger.  
-*   
+    
 * Or you can view more meaningful representations using a front end.  
 * This version contains a primitive Excel frontend, in the 'Excel-frontend' folder.  
 * Or you can use the front end at www.github.com/axfreeman/capitalism-simulation-client-15.0. 
   
 * That said, the whole point of having an API is that you can make your own frontend.  
-* 
+  
 * So you can use this API without accepting mine.  
 
 ## The general idea
-* Everything that explains this project is in the DOCS folder.
+* Everything that explains this project is in the DOCS folder. Some of this is out of date. 
 
 ## Installation and use, brief suggestions  
 
